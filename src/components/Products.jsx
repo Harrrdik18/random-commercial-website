@@ -18,12 +18,12 @@ const Products = ({ searchQuery }) => {
         const response = await axios.post('https://alphasilver.productsalphawizz.com/app/v1/api/get_sections');
         const allProducts = response.data.data.flatMap(section => section.product_details);
         
-        // Simulate loading for 1 minute if no products
+   
         if (allProducts.length === 0) {
           setTimeout(() => {
             setProducts(allProducts);
             setIsLoading(false);
-          }, 60000); // 60 seconds
+          }, 60000); 
         } else {
           setProducts(allProducts);
           setIsLoading(false);

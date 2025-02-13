@@ -49,10 +49,8 @@ const Timer = () => {
     }
 
     setTimers(prevTimers => {
-      // Stop all existing timers
       const updatedTimers = prevTimers.map(timer => ({ ...timer, isRunning: false }));
       
-      // Add new timer
       const newTimer = {
         id: Date.now(),
         name,

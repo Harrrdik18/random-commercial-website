@@ -19,7 +19,6 @@ const Login = () => {
     let isValid = true;
     const newErrors = {};
 
-    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
       isValid = false;
@@ -28,7 +27,6 @@ const Login = () => {
       isValid = false;
     }
 
-    // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
       isValid = false;
@@ -48,7 +46,6 @@ const Login = () => {
       [name]: value
     }));
     
-    // Clear error for the field being edited
     if (errors[name]) {
       const newErrors = { ...errors };
       delete newErrors[name];

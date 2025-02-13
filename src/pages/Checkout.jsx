@@ -30,7 +30,6 @@ const Checkout = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically process the payment and create the order
     console.log('Order submitted:', { cart, formData });
     clearCart();
     navigate('/order-confirmation');
@@ -56,7 +55,6 @@ const Checkout = () => {
         <h1 className="text-3xl font-bold mb-8">Checkout</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Order Summary */}
           <div className="md:col-span-1">
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
@@ -82,7 +80,6 @@ const Checkout = () => {
             </div>
           </div>
 
-          {/* Checkout Form */}
           <div className="md:col-span-2">
             <div className="bg-white p-6 rounded-lg shadow-lg">
               <form onSubmit={handleSubmit} className="space-y-6">
