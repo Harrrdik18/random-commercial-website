@@ -264,7 +264,7 @@ const Navbar = ({ onSearch }) => {
 
       {isCartOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 backdrop-blur-sm bg-black/30 z-40"
           onClick={() => setIsCartOpen(false)}
         />
       )}

@@ -7,6 +7,8 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    fcm_id: '12345678',
+    device_name: '1'
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +20,7 @@ const Login = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Clear error when user starts typing
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -28,15 +30,15 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'https://alphasilver.productsalphawizz.com/app/v1/api/login',
+        'https://hellostay.com/api/auth/login',
         formData
       );
 
-      if (response.data.status) {
-        login(response.data.token, response.data.data);
+      if (response.data.status === 1) {
+        login(response.data.access_token, response.data.user);
         navigate('/');
       } else {
-        setError(response.data.message || 'Login failed. Please try again.');
+        setError('Login failed. Please try again.');
       }
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred. Please try again.');
