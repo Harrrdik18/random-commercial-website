@@ -5,11 +5,23 @@ import 'swiper/swiper-bundle.css';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import { useCart } from '../context/CartContext';
 import LoginPrompt from './LoginPrompt';
+import Toast from './Toast';
 
 const Products = ({ searchQuery }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { addToCart, showLoginPrompt, closeLoginPrompt } = useCart();
+  const [showToast, setShowToast] = useState(false);
+
+  const handleAddToCart = (product) => {
+    const added = addToCart(product);
+    if (added) {
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+    }
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -53,6 +65,7 @@ const Products = ({ searchQuery }) => {
   return (
     <>
       <LoginPrompt isOpen={showLoginPrompt} onClose={closeLoginPrompt} />
+      <Toast message="Added to cart!" isVisible={showToast} />
       
       <div id="products" className="products-section py-10 px-4">
         <h2 className="text-2xl md:text-3xl font-bold text-center mb-6">Our Products</h2>
@@ -118,10 +131,7 @@ const Products = ({ searchQuery }) => {
                       ₹{product.min_max_price.special_price}
                     </p>
                     <button
-                      onClick={() => {
-                        addToCart(product);
-                        console.log('Added to cart:', product.name);
-                      }}
+                      onClick={() => handleAddToCart(product)}
                       className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
                     >
                       Add to Cart
