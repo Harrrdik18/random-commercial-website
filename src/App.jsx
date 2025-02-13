@@ -10,6 +10,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Checkout from "./pages/Checkout";
 import Footer from "./components/Footer";
+import Timer from "./pages/Timer";
 
 const App = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,6 +30,7 @@ const App = () => {
               <Route path="/register" element={<Register />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/timer" element={<Timer />} />
               <Route path="/" element={
                 <>
                   <Hero />
