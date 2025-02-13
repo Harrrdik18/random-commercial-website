@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { encryptData, decryptData } from '../utils/encryption';
 
 const Timer = () => {
-  const [timers, setTimers] = useState([]);
+  const [timers, setTimers] = useState(() => {
+    const encryptedTimers = localStorage.getItem('timers');
+    if (encryptedTimers) {
+      const decryptedTimers = decryptData(encryptedTimers);
+      return decryptedTimers || [];
+    }
+    return [];
+  });
+  
   const [name, setName] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   
@@ -11,6 +20,11 @@ const Timer = () => {
     month: 'long',
     day: 'numeric'
   });
+
+  useEffect(() => {
+    const encryptedTimers = encryptData(timers);
+    localStorage.setItem('timers', encryptedTimers);
+  }, [timers]);
 
   useEffect(() => {
     const intervals = timers.map(timer => {
@@ -42,7 +56,7 @@ const Timer = () => {
     return `${formatNumber(hours)}:${formatNumber(minutes)}:${formatNumber(seconds)}`;
   };
 
-  const handleStartNewTimer = () => {
+  const handleInitializeTimer = () => {
     if (name.trim() === '') {
       alert('Please enter your name first');
       return;
@@ -55,9 +69,10 @@ const Timer = () => {
         id: Date.now(),
         name,
         time: 0,
-        isRunning: true,
-        startTime: new Date().toLocaleTimeString(),
-        date: selectedDate
+        isRunning: false,
+        startTime: 'Not started',
+        date: selectedDate,
+        created: new Date().toISOString() 
       };
 
       return [...updatedTimers, newTimer];
@@ -69,7 +84,19 @@ const Timer = () => {
     setTimers(prevTimers => 
       prevTimers.map(timer => {
         if (timer.id === timerId) {
-          return { ...timer, isRunning: !timer.isRunning };
+          if (!timer.isRunning) {
+            return {
+              ...timer,
+              isRunning: true,
+              startTime: new Date().toLocaleTimeString(),
+              lastStarted: new Date().getTime() 
+            };
+          }
+          return { 
+            ...timer, 
+            isRunning: false,
+            lastStopped: new Date().getTime() 
+          };
         }
         return { ...timer, isRunning: false };
       })
@@ -77,10 +104,16 @@ const Timer = () => {
   };
 
   const deleteTimer = (timerId) => {
-    setTimers(prevTimers => prevTimers.filter(timer => timer.id !== timerId));
+    if (window.confirm('Are you sure you want to delete this timer?')) {
+      setTimers(prevTimers => prevTimers.filter(timer => timer.id !== timerId));
+    }
   };
 
   const filteredTimers = timers.filter(timer => timer.date === selectedDate);
+
+  const sortedTimers = [...filteredTimers].sort((a, b) => 
+    new Date(b.created) - new Date(a.created)
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -110,26 +143,31 @@ const Timer = () => {
               />
             </div>
             <button
-              onClick={handleStartNewTimer}
+              onClick={handleInitializeTimer}
               className="w-full md:w-auto px-6 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 whitespace-nowrap"
             >
-              Start New Timer
+              Initialize Timer
             </button>
           </div>
         </div>
 
         <div className="space-y-4">
-          {filteredTimers.length === 0 ? (
+          {sortedTimers.length === 0 ? (
             <div className="bg-white rounded-lg shadow-lg p-6 text-center text-gray-500">
               No timers found for this date
             </div>
           ) : (
-            filteredTimers.map((timer) => (
+            sortedTimers.map((timer) => (
               <div key={timer.id} className="bg-white rounded-lg shadow-lg p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h2 className="text-xl font-semibold">{timer.name}</h2>
-                    <p className="text-gray-500">Started at: {timer.startTime}</p>
+                    <p className="text-gray-500">
+                      {timer.startTime === 'Not started' 
+                        ? 'Not started yet'
+                        : `Started at: ${timer.startTime}`
+                      }
+                    </p>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-4xl font-mono">
